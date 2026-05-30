@@ -1,0 +1,17 @@
+#ignore the packages which are not required
+kubectl
+# InsForge & AI agent skills
+.insforge
+.gemini
+.agent
+.agents
+.augment
+.claude
+.cline
+.github/copilot*
+.kilocode
+.qoder
+.qwen
+.roo
+.trae
+.windsurf
