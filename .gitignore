@@ -1,5 +1,6 @@
 #ignore the packages which are not required
 kubectl
+backend/.env
 # InsForge & AI agent skills
 .insforge
 .gemini
