@@ -1,9 +1,9 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from .executor import executor
 
 class DeploymentInspector:
-    def inspect(self) -> Dict[str, Any]:
-        result = executor.run(["get", "deployments", "-A"], json_output=True)
+    def inspect(self, context: Optional[str] = None) -> Dict[str, Any]:
+        result = executor.run(["get", "deployments", "-A"], json_output=True, context=context)
         
         if not result["success"]:
             return {"unhealthy_deployments": [], "error": result["error"]}

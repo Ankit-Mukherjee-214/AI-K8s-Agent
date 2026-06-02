@@ -11,12 +11,14 @@ class OpenRouterClient:
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
 
     async def get_diagnosis(self, prompt: str) -> Optional[Dict[str, Any]]:
-        if not self.api_key:
+        # Read from settings to ensure we get the patched value
+        api_key = settings.OPENROUTER_API_KEY
+        if not api_key:
             logger.error("OPENROUTER_API_KEY is not set.")
             return None
 
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://github.com/ai-kubernetes-agent", # Required by OpenRouter
             "X-Title": "AI Kubernetes Agent"
@@ -34,7 +36,25 @@ class OpenRouterClient:
                     "content": prompt
                 }
             ],
-            "response_format": { "type": "json_object" }
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "diagnosis",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "root_cause": {"type": "string"},
+                            "explanation": {"type": "string"},
+                            "fix": {"type": "string"},
+                            "kubectl_command": {"type": "string"},
+                            "confidence": {"type": "integer"}
+                        },
+                        "required": ["root_cause", "explanation", "fix", "kubectl_command", "confidence"],
+                        "additionalProperties": False
+                    }
+                }
+            }
         }
 
         try:

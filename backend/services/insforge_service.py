@@ -13,7 +13,7 @@ class InsForgeService:
         if not self.url or not self.api_key:
             return None
 
-        endpoint = f"{self.url}/rest/v1/investigations"
+        endpoint = f"{self.url}/api/database/records/investigations"
         headers = {
             "apikey": self.api_key,
             "Authorization": f"Bearer {self.api_key}",
@@ -37,12 +37,12 @@ class InsForgeService:
             return None
 
     async def publish_progress(self, investigation_id: str, message: str):
-        """Saves a progress step to the database and broadcasts it."""
+        """Saves a progress step to the database."""
         if not self.url or not self.api_key or not investigation_id:
             return
 
-        # 1. Save to database for persistence
-        db_endpoint = f"{self.url}/rest/v1/investigation_progress"
+        # Save to database for persistence
+        db_endpoint = f"{self.url}/api/database/records/investigation_progress"
         headers = {
             "apikey": self.api_key,
             "Authorization": f"Bearer {self.api_key}",
@@ -53,19 +53,9 @@ class InsForgeService:
             "message": message
         }
 
-        # 2. Broadcast for realtime UI updates
-        rt_endpoint = f"{self.url}/realtime/v1/api/broadcast"
-        rt_payload = {
-            "channel": "investigation",
-            "event": "progress",
-            "payload": {"message": message, "investigation_id": investigation_id}
-        }
-
         try:
             async with httpx.AsyncClient() as client:
-                # Run both in parallel
                 await client.post(db_endpoint, headers=headers, json=[db_data])
-                await client.post(rt_endpoint, headers=headers, json=rt_payload)
         except Exception as e:
             logger.error(f"Failed to publish progress: {e}")
 
@@ -74,7 +64,7 @@ class InsForgeService:
         if not self.url or not self.api_key or not investigation_id:
             return
 
-        endpoint = f"{self.url}/rest/v1/investigations"
+        endpoint = f"{self.url}/api/database/records/investigations"
         headers = {
             "apikey": self.api_key,
             "Authorization": f"Bearer {self.api_key}",

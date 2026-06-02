@@ -1,13 +1,13 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from .executor import executor
 
 class NetworkInspector:
-    def inspect(self) -> Dict[str, Any]:
+    def inspect(self, context: Optional[str] = None) -> Dict[str, Any]:
         # Check Services
-        svc_result = executor.run(["get", "svc", "-A"], json_output=True)
+        svc_result = executor.run(["get", "svc", "-A"], json_output=True, context=context)
         
         # Check Endpoints
-        ep_result = executor.run(["get", "endpoints", "-A"], json_output=True)
+        ep_result = executor.run(["get", "endpoints", "-A"], json_output=True, context=context)
 
         if not svc_result["success"]:
             return {"services": [], "error": svc_result["error"]}

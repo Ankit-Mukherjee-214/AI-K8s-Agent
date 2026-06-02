@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from .executor import executor
 
 class EventsAnalyzer:
@@ -13,8 +13,8 @@ class EventsAnalyzer:
         "Killing"
     ]
 
-    def analyze(self) -> Dict[str, Any]:
-        result = executor.run(["get", "events", "-A", "--sort-by=.lastTimestamp"], json_output=True)
+    def analyze(self, context: Optional[str] = None) -> Dict[str, Any]:
+        result = executor.run(["get", "events", "-A", "--sort-by=.lastTimestamp"], json_output=True, context=context)
         
         if not result["success"]:
             return {"events": [], "error": result["error"]}
